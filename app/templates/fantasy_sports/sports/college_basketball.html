@@ -1,0 +1,64 @@
+{% extends "fantasy_sports/sports/base_sport.html" %}
+
+{% block sport_title %}College Basketball{% endblock %}
+{% block sport_name %}College Basketball{% endblock %}
+{% block sport_subtitle %}March Madness and college hoops props{% endblock %}
+{% block sport_icon %}🏀🎓{% endblock %}
+
+{% block sport_gradient %}from-purple-50 to-indigo-100{% endblock %}
+{% block sport_header_bg %}bg-gradient-to-r from-purple-600 to-indigo-600{% endblock %}
+{% block sport_slip_bg %}bg-purple-600{% endblock %}
+{% block sport_slip_hover %}bg-purple-700{% endblock %}
+
+{% block sport_prop_options %}
+<option value="points">Points</option>
+<option value="rebounds">Rebounds</option>
+<option value="assists">Assists</option>
+<option value="steals">Steals</option>
+<option value="blocks">Blocks</option>
+<option value="field_goals">Field Goals</option>
+<option value="three_pointers">3-Pointers</option>
+<option value="free_throws">Free Throws</option>
+{% endblock %}
+
+{% block sport_league_options %}
+<option value="ncaa-d1">NCAA Division I</option>
+<option value="ncaa-d2">NCAA Division II</option>
+<option value="ncaa-d3">NCAA Division III</option>
+{% endblock %}
+
+{% block sport_scripts %}
+<script>
+// College Basketball-specific customizations
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the sport navigation to highlight College Basketball
+    document.querySelectorAll('.sport-nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector('[data-sport="college-basketball"]')?.classList.add('active');
+    
+    // College Basketball-specific prop type mappings
+    const cbbPropTypes = {
+        'points': 'Points',
+        'rebounds': 'Rebounds',
+        'assists': 'Assists',
+        'steals': 'Steals',
+        'blocks': 'Blocks',
+        'field_goals': 'Field Goals',
+        'three_pointers': '3-Pointers',
+        'free_throws': 'Free Throws'
+    };
+    
+    // Add College Basketball navigation if not present
+    const sportsNav = document.querySelector('.sport-nav-btn[data-sport="soccer"]')?.parentElement;
+    if (sportsNav && !document.querySelector('[data-sport="college-basketball"]')) {
+        const cbbBtn = document.createElement('a');
+        cbbBtn.href = "{{ url_for('fantasy_sports.college_basketball') }}";
+        cbbBtn.className = "sport-nav-btn active";
+        cbbBtn.setAttribute('data-sport', 'college-basketball');
+        cbbBtn.innerHTML = '🏀🎓 CBB';
+        sportsNav.appendChild(cbbBtn);
+    }
+});
+</script>
+{% endblock %}

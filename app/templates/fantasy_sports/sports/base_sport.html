@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}{% block sport_title %}{{ sport.name }}{% endblock %} - Fantasy Sports{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-gradient-to-br {% block sport_gradient %}from-blue-50 to-indigo-100{% endblock %}">
+    <!-- Sport Header -->
+    <div class="{% block sport_header_bg %}bg-gradient-to-r from-blue-600 to-indigo-600{% endblock %} text-white">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center space-x-4">
+                    <div class="{% block sport_icon_bg %}bg-white bg-opacity-20{% endblock %} rounded-full p-4">
+                        <div class="text-4xl">
+                            {% block sport_icon %}🏈{% endblock %}
+                        </div>
+                    </div>
+                    <div>
+                        <h1 class="text-4xl font-bold">{% block sport_name %}{{ sport.name }}{% endblock %}</h1>
+                        <p class="text-lg opacity-90">{% block sport_subtitle %}Place your picks on today's games{% endblock %}</p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <a href="{{ url_for('fantasy_sports.pick_builder') }}" 
+                       class="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Pick Builder
+                    </a>
+                    <a href="{{ url_for('fantasy_sports.index') }}" 
+                       class="bg-white bg-opacity-20 text-white px-6 py-2 rounded-lg font-semibold hover:bg-opacity-30 transition-colors">
+                        ← Back
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sport Navigation -->
+            <div class="flex space-x-1 bg-white bg-opacity-10 rounded-lg p-1 overflow-x-auto">
+                <a href="{{ url_for('fantasy_sports.nfl') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.nfl' %}active{% endif %}" 
+                   data-sport="nfl">
+                    🏈 NFL
+                </a>
+                <a href="{{ url_for('fantasy_sports.mlb') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.mlb' %}active{% endif %}" 
+                   data-sport="mlb">
+                    ⚾ MLB
+                </a>
+                <a href="{{ url_for('fantasy_sports.nba') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.nba' %}active{% endif %}" 
+                   data-sport="nba">
+                    🏀 NBA
+                </a>
+                <a href="{{ url_for('fantasy_sports.nhl') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.nhl' %}active{% endif %}" 
+                   data-sport="nhl">
+                    🏒 NHL
+                </a>
+                <a href="{{ url_for('fantasy_sports.soccer') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.soccer' %}active{% endif %}" 
+                   data-sport="soccer">
+                    ⚽ Soccer
+                </a>
+                <a href="{{ url_for('fantasy_sports.college_football') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.college_football' %}active{% endif %}" 
+                   data-sport="college-football">
+                    🏈🎓 CFB
+                </a>
+                <a href="{{ url_for('fantasy_sports.college_basketball') }}" 
+                   class="sport-nav-btn {% if request.endpoint == 'fantasy_sports.college_basketball' %}active{% endif %}" 
+                   data-sport="college-basketball">
+                    🏀🎓 CBB
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sport Content -->
+    <div class="container mx-auto px-4 py-8">
+        <!-- Quick Stats Bar -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+                <div class="text-2xl font-bold text-gray-900" id="active-props-count">-</div>
+                <div class="text-sm text-gray-600">Active Props</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+                <div class="text-2xl font-bold text-gray-900" id="games-today-count">-</div>
+                <div class="text-sm text-gray-600">Games Today</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+                <div class="text-2xl font-bold text-gray-900" id="featured-players-count">-</div>
+                <div class="text-sm text-gray-600">Featured Players</div>
+            </div>
+            <div class="bg-white rounded-lg shadow-md p-4 text-center">
+                <div class="text-2xl font-bold text-green-600" id="max-payout">50x</div>
+                <div class="text-sm text-gray-600">Max Payout</div>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+            <div class="flex flex-wrap gap-4 items-center">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prop Type:</label>
+                    <select id="prop-type-filter" class="border rounded px-3 py-2">
+                        <option value="">All Props</option>
+                        {% block sport_prop_options %}
+                        <!-- Sport-specific prop types will be loaded here -->
+                        {% endblock %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">League:</label>
+                    <select id="league-filter" class="border rounded px-3 py-2">
+                        <option value="">All Leagues</option>
+                        {% block sport_league_options %}
+                        <!-- Sport-specific leagues will be loaded here -->
+                        {% endblock %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Team:</label>
+                    <select id="team-filter" class="border rounded px-3 py-2">
+                        <option value="">All Teams</option>
+                    </select>
+                </div>
+                <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Search Player:</label>
+                    <input type="text" id="player-search" placeholder="Search players..." 
+                           class="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Tabs -->
+        <div class="bg-white rounded-lg shadow-md mb-8">
+            <div class="border-b">
+                <nav class="flex space-x-8 px-6" aria-label="Tabs">
+                    <button class="tab-btn active" data-tab="props">
+                        Featured Props
+                    </button>
+                    <button class="tab-btn" data-tab="players">
+                        Top Players
+                    </button>
+                    <button class="tab-btn" data-tab="games">
+                        Upcoming Games
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Props Tab -->
+            <div id="props-tab" class="tab-content p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="props-container">
+                    <!-- Props will be loaded here -->
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        Loading props...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Players Tab -->
+            <div id="players-tab" class="tab-content p-6 hidden">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6" id="players-container">
+                    <!-- Players will be loaded here -->
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        Loading players...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Games Tab -->
+            <div id="games-tab" class="tab-content p-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="games-container">
+                    <!-- Games will be loaded here -->
+                    <div class="col-span-full text-center py-8 text-gray-500">
+                        Loading games...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Pick Slip -->
+    <div id="floating-slip" class="fixed bottom-6 right-6 {% block sport_slip_bg %}bg-blue-600{% endblock %} text-white rounded-full p-4 shadow-lg cursor-pointer hover:{% block sport_slip_hover %}bg-blue-700{% endblock %} transition-colors hidden z-50">
+        <div class="flex items-center">
+            <div class="mr-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="font-semibold" id="slip-count">0 picks</div>
+                <div class="text-xs opacity-75">View Slip</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Templates -->
+{% include 'fantasy_sports/components/prop_card_template.html' %}
+{% include 'fantasy_sports/components/player_card_template.html' %}
+{% include 'fantasy_sports/components/game_card_template.html' %}
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+// Sport-specific configuration
+const sportConfig = {
+    sport_id: {{ sport.sport_id }},
+    sport_name: '{{ sport.name }}',
+    sport_short: '{{ sport.short_name }}'
+};
+
+// Custom styles for this sport page
+const sportStyles = `
+    .sport-nav-btn {
+        @apply px-4 py-2 rounded-md text-white text-sm font-medium transition-colors;
+    }
+    .sport-nav-btn:hover {
+        @apply bg-white bg-opacity-20;
+    }
+    .sport-nav-btn.active {
+        @apply bg-white text-gray-900;
+    }
+    .tab-btn {
+        @apply py-4 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 transition-colors;
+    }
+    .tab-btn.active {
+        @apply border-blue-500 text-blue-600;
+    }
+`;
+
+// Add styles to page
+const styleElement = document.createElement('style');
+styleElement.textContent = sportStyles;
+document.head.appendChild(styleElement);
+
+// Initialize sport page
+class SportPage {
+    constructor(config) {
+        this.sportId = config.sport_id;
+        this.sportName = config.sport_name;
+        this.selectedPicks = JSON.parse(localStorage.getItem('selectedPicks') || '[]');
+        this.currentTab = 'props';
+        
+        this.init();
+    }
+    
+    init() {
+        this.loadInitialData();
+        this.bindEvents();
+        this.updateFloatingSlip();
+    }
+    
+    async loadInitialData() {
+        await Promise.all([
+            this.loadStats(),
+            this.loadProps(),
+            this.loadPropTypes(),
+            this.loadTeams()
+        ]);
+    }
+    
+    async loadStats() {
+        try {
+            // Load various stats for the sport
+            const propsResponse = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=100`);
+            const propsData = await propsResponse.json();
+            
+            if (propsData.success) {
+                document.getElementById('active-props-count').textContent = propsData.props.length;
+                
+                // Count featured players (unique players with props)
+                const uniquePlayers = new Set(propsData.props.map(p => p.player_id));
+                document.getElementById('featured-players-count').textContent = uniquePlayers.size;
+            }
+            
+            // Load games for today
+            const gamesResponse = await fetch('/fantasy-sports/api/games');
+            const gamesData = await gamesResponse.json();
+            
+            if (gamesData.success) {
+                const todayGames = gamesData.games.filter(g => {
+                    const gameDate = new Date(g.game_date);
+                    const today = new Date();
+                    return gameDate.toDateString() === today.toDateString();
+                });
+                document.getElementById('games-today-count').textContent = todayGames.length;
+            }
+        } catch (error) {
+            console.error('Error loading stats:', error);
+        }
+    }
+    
+    async loadProps() {
+        try {
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=50`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+            }
+        } catch (error) {
+            console.error('Error loading props:', error);
+        }
+    }
+    
+    async loadPropTypes() {
+        try {
+            const response = await fetch(`/fantasy-sports/api/prop-types?sport_id=${this.sportId}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.success) {
+                    const select = document.getElementById('prop-type-filter');
+                    data.prop_types.forEach(type => {
+                        const option = document.createElement('option');
+                        option.value = type.prop_type_id;
+                        option.textContent = type.name;
+                        select.appendChild(option);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Error loading prop types:', error);
+        }
+    }
+    
+    async loadTeams() {
+        try {
+            const response = await fetch(`/fantasy-sports/api/teams?sport_id=${this.sportId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                const select = document.getElementById('team-filter');
+                data.teams.forEach(team => {
+                    const option = document.createElement('option');
+                    option.value = team.team_id;
+                    option.textContent = `${team.city} ${team.name}`;
+                    select.appendChild(option);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading teams:', error);
+        }
+    }
+    
+    renderProps(props) {
+        const container = document.getElementById('props-container');
+        container.innerHTML = '';
+        
+        if (props.length === 0) {
+            container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No props available for this sport</div>';
+            return;
+        }
+        
+        props.forEach(prop => {
+            const propCard = this.createPropCard(prop);
+            container.appendChild(propCard);
+        });
+    }
+    
+    createPropCard(prop) {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-50 rounded-lg p-4 hover:shadow-md transition-shadow';
+        card.innerHTML = `
+            <div class="flex justify-between items-start mb-3">
+                <div>
+                    <h4 class="font-semibold">${prop.first_name} ${prop.last_name}</h4>
+                    <p class="text-sm text-gray-600">${prop.player_team_short} vs ${prop.home_team_short === prop.player_team_short ? prop.away_team_short : prop.home_team_short}</p>
+                </div>
+                <span class="text-xs bg-gray-200 text-gray-700 px-2 py-1 rounded">${prop.prop_type_name}</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="pick-option over-btn border-2 border-blue-200 rounded px-3 py-2 text-sm hover:border-blue-400 hover:bg-blue-50" 
+                        data-prop-id="${prop.prop_id}" data-selection="over" data-line="${prop.line_value}" data-odds="${prop.over_odds}">
+                    <div class="font-semibold text-blue-600">OVER</div>
+                    <div class="font-bold">${prop.line_value}</div>
+                    <div class="text-xs text-gray-500">${this.formatOdds(prop.over_odds)}</div>
+                </button>
+                <button class="pick-option under-btn border-2 border-red-200 rounded px-3 py-2 text-sm hover:border-red-400 hover:bg-red-50"
+                        data-prop-id="${prop.prop_id}" data-selection="under" data-line="${prop.line_value}" data-odds="${prop.under_odds}">
+                    <div class="font-semibold text-red-600">UNDER</div>
+                    <div class="font-bold">${prop.line_value}</div>
+                    <div class="text-xs text-gray-500">${this.formatOdds(prop.under_odds)}</div>
+                </button>
+            </div>
+        `;
+        
+        // Bind pick selection events
+        card.querySelectorAll('.pick-option').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                this.addPick(prop, e.target.closest('.pick-option').dataset);
+            });
+        });
+        
+        return card;
+    }
+    
+    addPick(prop, selection) {
+        const pick = {
+            prop_id: prop.prop_id,
+            selection: selection.selection,
+            line_value: selection.line,
+            odds: selection.odds,
+            player_name: `${prop.first_name} ${prop.last_name}`,
+            prop_type_name: prop.prop_type_name
+        };
+        
+        // Remove existing pick for same prop
+        this.selectedPicks = this.selectedPicks.filter(p => p.prop_id != prop.prop_id);
+        
+        // Add new pick
+        this.selectedPicks.push(pick);
+        
+        // Save to localStorage
+        localStorage.setItem('selectedPicks', JSON.stringify(this.selectedPicks));
+        
+        // Update UI
+        this.updateFloatingSlip();
+        this.showPickAdded(pick.player_name);
+    }
+    
+    updateFloatingSlip() {
+        const slip = document.getElementById('floating-slip');
+        const count = this.selectedPicks.length;
+        
+        if (count > 0) {
+            document.getElementById('slip-count').textContent = `${count} pick${count !== 1 ? 's' : ''}`;
+            slip.classList.remove('hidden');
+        } else {
+            slip.classList.add('hidden');
+        }
+    }
+    
+    showPickAdded(playerName) {
+        const feedback = document.createElement('div');
+        feedback.className = 'fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded shadow-lg z-50';
+        feedback.textContent = `Added ${playerName} to slip`;
+        document.body.appendChild(feedback);
+        
+        setTimeout(() => feedback.remove(), 2000);
+    }
+    
+    bindEvents() {
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const tab = e.target.dataset.tab;
+                this.switchTab(tab);
+            });
+        });
+        
+        // Floating slip click
+        document.getElementById('floating-slip').addEventListener('click', () => {
+            window.location.href = '/fantasy-sports/pick-builder';
+        });
+        
+        // Filter events would be added here
+    }
+    
+    switchTab(tab) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.add('hidden');
+        });
+        
+        // Remove active class from all buttons
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(`${tab}-tab`).classList.remove('hidden');
+        
+        // Add active class to clicked button
+        document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+        
+        this.currentTab = tab;
+        
+        // Load tab content if needed
+        if (tab === 'players' && document.getElementById('players-container').children.length === 1) {
+            this.loadPlayers();
+        } else if (tab === 'games' && document.getElementById('games-container').children.length === 1) {
+            this.loadGames();
+        }
+    }
+    
+    async loadPlayers() {
+        try {
+            const response = await fetch(`/fantasy-sports/api/players?sport_id=${this.sportId}&limit=20`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderPlayers(data.players);
+            }
+        } catch (error) {
+            console.error('Error loading players:', error);
+        }
+    }
+    
+    async loadGames() {
+        try {
+            const response = await fetch('/fantasy-sports/api/games');
+            const data = await response.json();
+            
+            if (data.success) {
+                // Filter games for this sport
+                const sportGames = data.games.filter(g => g.sport_name === this.sportName);
+                this.renderGames(sportGames);
+            }
+        } catch (error) {
+            console.error('Error loading games:', error);
+        }
+    }
+    
+    renderPlayers(players) {
+        const container = document.getElementById('players-container');
+        container.innerHTML = '';
+        
+        if (players.length === 0) {
+            container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No players available</div>';
+            return;
+        }
+        
+        players.forEach(player => {
+            const playerCard = this.createPlayerCard(player);
+            container.appendChild(playerCard);
+        });
+    }
+    
+    renderGames(games) {
+        const container = document.getElementById('games-container');
+        container.innerHTML = '';
+        
+        if (games.length === 0) {
+            container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">No upcoming games</div>';
+            return;
+        }
+        
+        games.forEach(game => {
+            const gameCard = this.createGameCard(game);
+            container.appendChild(gameCard);
+        });
+    }
+    
+    createPlayerCard(player) {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden cursor-pointer';
+        card.innerHTML = `
+            <div class="aspect-square bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+                <img src="${player.photo_url || 'https://via.placeholder.com/150x150/e5e7eb/6b7280?text=No+Photo'}" 
+                     alt="${player.first_name} ${player.last_name}" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='https://via.placeholder.com/150x150/e5e7eb/6b7280?text=No+Photo'">
+            </div>
+            <div class="p-3">
+                <h4 class="font-semibold text-sm">${player.first_name} ${player.last_name}</h4>
+                <p class="text-xs text-gray-600">${player.position || 'N/A'} - ${player.team_short_name || 'FA'}</p>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => {
+            // Navigate to player detail or show props
+            window.location.href = `/fantasy-sports/player/${player.player_id}`;
+        });
+        
+        return card;
+    }
+    
+    createGameCard(game) {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow';
+        const gameDate = new Date(game.game_date);
+        
+        card.innerHTML = `
+            <div class="text-center mb-3">
+                <div class="text-xs text-gray-500">${gameDate.toLocaleDateString()}</div>
+                <div class="text-sm font-medium">${gameDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+            </div>
+            <div class="flex justify-between items-center">
+                <div class="text-center">
+                    <div class="font-semibold">${game.away_team_short}</div>
+                    <div class="text-xs text-gray-600">${game.away_team_city}</div>
+                </div>
+                <div class="text-gray-400">@</div>
+                <div class="text-center">
+                    <div class="font-semibold">${game.home_team_short}</div>
+                    <div class="text-xs text-gray-600">${game.home_team_city}</div>
+                </div>
+            </div>
+            ${game.venue ? `<div class="text-xs text-gray-500 text-center mt-2">${game.venue}</div>` : ''}
+        `;
+        
+        return card;
+    }
+    
+    formatOdds(odds) {
+        const num = parseFloat(odds);
+        return num > 0 ? `+${num}` : `${num}`;
+    }
+}
+
+// Initialize the sport page
+document.addEventListener('DOMContentLoaded', () => {
+    new SportPage(sportConfig);
+});
+</script>
+
+{% block sport_scripts %}
+<!-- Sport-specific JavaScript can be added here -->
+{% endblock %}
+
+{% endblock %}

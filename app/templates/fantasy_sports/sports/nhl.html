@@ -1,0 +1,58 @@
+{% extends "fantasy_sports/sports/base_sport.html" %}
+
+{% block sport_title %}NHL Hockey{% endblock %}
+{% block sport_name %}NHL Hockey{% endblock %}
+{% block sport_subtitle %}Score big with hockey props{% endblock %}
+{% block sport_icon %}🏒{% endblock %}
+
+{% block sport_gradient %}from-blue-50 to-cyan-100{% endblock %}
+{% block sport_header_bg %}bg-gradient-to-r from-blue-700 to-cyan-600{% endblock %}
+{% block sport_slip_bg %}bg-blue-700{% endblock %}
+{% block sport_slip_hover %}bg-blue-800{% endblock %}
+
+{% block sport_prop_options %}
+<option value="goals">Goals</option>
+<option value="assists">Assists</option>
+<option value="points">Points</option>
+<option value="shots">Shots on Goal</option>
+<option value="saves">Saves</option>
+<option value="time_on_ice">Time on Ice</option>
+{% endblock %}
+
+{% block sport_league_options %}
+<option value="nhl">NHL</option>
+{% endblock %}
+
+{% block sport_scripts %}
+<script>
+// NHL-specific customizations
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the sport navigation to highlight NHL
+    document.querySelectorAll('.sport-nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector('[data-sport="nhl"]')?.classList.add('active');
+    
+    // NHL-specific prop type mappings
+    const nhlPropTypes = {
+        'goals': 'Goals',
+        'assists': 'Assists', 
+        'points': 'Points',
+        'shots': 'Shots on Goal',
+        'saves': 'Saves',
+        'time_on_ice': 'Time on Ice'
+    };
+    
+    // Add NHL navigation if not present
+    const sportsNav = document.querySelector('.sport-nav-btn[data-sport="soccer"]')?.parentElement;
+    if (sportsNav && !document.querySelector('[data-sport="nhl"]')) {
+        const nhlBtn = document.createElement('a');
+        nhlBtn.href = "{{ url_for('fantasy_sports.nhl') }}";
+        nhlBtn.className = "sport-nav-btn active";
+        nhlBtn.setAttribute('data-sport', 'nhl');
+        nhlBtn.innerHTML = '🏒 NHL';
+        sportsNav.appendChild(nhlBtn);
+    }
+});
+</script>
+{% endblock %}

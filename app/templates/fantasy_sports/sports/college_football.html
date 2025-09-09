@@ -1,0 +1,63 @@
+{% extends "fantasy_sports/sports/base_sport.html" %}
+
+{% block sport_title %}College Football{% endblock %}
+{% block sport_name %}College Football{% endblock %}
+{% block sport_subtitle %}College gameday props and picks{% endblock %}
+{% block sport_icon %}🏈🎓{% endblock %}
+
+{% block sport_gradient %}from-orange-50 to-red-100{% endblock %}
+{% block sport_header_bg %}bg-gradient-to-r from-orange-600 to-red-600{% endblock %}
+{% block sport_slip_bg %}bg-orange-600{% endblock %}
+{% block sport_slip_hover %}bg-orange-700{% endblock %}
+
+{% block sport_prop_options %}
+<option value="passing_yards">Passing Yards</option>
+<option value="rushing_yards">Rushing Yards</option>
+<option value="receiving_yards">Receiving Yards</option>
+<option value="touchdowns">Touchdowns</option>
+<option value="completions">Completions</option>
+<option value="attempts">Attempts</option>
+<option value="receptions">Receptions</option>
+<option value="carries">Carries</option>
+{% endblock %}
+
+{% block sport_league_options %}
+<option value="ncaa-fbs">NCAA FBS</option>
+<option value="ncaa-fcs">NCAA FCS</option>
+{% endblock %}
+
+{% block sport_scripts %}
+<script>
+// College Football-specific customizations
+document.addEventListener('DOMContentLoaded', function() {
+    // Update the sport navigation to highlight College Football
+    document.querySelectorAll('.sport-nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector('[data-sport="college-football"]')?.classList.add('active');
+    
+    // College Football-specific prop type mappings
+    const cfbPropTypes = {
+        'passing_yards': 'Passing Yards',
+        'rushing_yards': 'Rushing Yards',
+        'receiving_yards': 'Receiving Yards',
+        'touchdowns': 'Touchdowns',
+        'completions': 'Completions',
+        'attempts': 'Attempts',
+        'receptions': 'Receptions',
+        'carries': 'Carries'
+    };
+    
+    // Add College Football navigation if not present
+    const sportsNav = document.querySelector('.sport-nav-btn[data-sport="soccer"]')?.parentElement;
+    if (sportsNav && !document.querySelector('[data-sport="college-football"]')) {
+        const cfbBtn = document.createElement('a');
+        cfbBtn.href = "{{ url_for('fantasy_sports.college_football') }}";
+        cfbBtn.className = "sport-nav-btn active";
+        cfbBtn.setAttribute('data-sport', 'college-football');
+        cfbBtn.innerHTML = '🏈🎓 CFB';
+        sportsNav.appendChild(cfbBtn);
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Fantasy Sports - My Picks{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">My Pick Slips</h1>
+        <div class="flex space-x-4">
+            <a href="{{ url_for('fantasy_sports.pick_builder') }}" 
+               class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+                Create New Slip
+            </a>
+            <a href="{{ url_for('fantasy_sports.index') }}" class="text-blue-600 hover:text-blue-800">
+                ← Back to Home
+            </a>
+        </div>
+    </div>
+
+    {% if slips %}
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+            {% for slip in slips %}
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold">Slip #{{ slip.slip_id }}</h3>
+                        <p class="text-sm text-gray-600">{{ slip.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                    </div>
+                    <div class="text-right">
+                        {% if slip.status == 'pending' %}
+                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">Pending</span>
+                        {% elif slip.status == 'won' %}
+                            <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">Won</span>
+                        {% elif slip.status == 'lost' %}
+                            <span class="px-2 py-1 bg-red-100 text-red-800 rounded text-sm">Lost</span>
+                        {% else %}
+                            <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-sm">{{ slip.status.title() }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Entry Fee:</span>
+                        <span class="font-medium">${{ "%.2f"|format(slip.entry_fee) }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Number of Picks:</span>
+                        <span class="font-medium">{{ slip.num_picks }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Potential Payout:</span>
+                        <span class="font-medium text-green-600">${{ "%.2f"|format(slip.potential_payout) }}</span>
+                    </div>
+                    {% if slip.actual_payout > 0 %}
+                    <div class="flex justify-between border-t pt-2">
+                        <span class="text-gray-600">Actual Payout:</span>
+                        <span class="font-bold text-green-600">${{ "%.2f"|format(slip.actual_payout) }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-gray-500">
+                        Multiplier: {{ (slip.potential_payout / slip.entry_fee)|round(1) }}x
+                    </div>
+                    <a href="{{ url_for('fantasy_sports.view_slip', slip_id=slip.slip_id) }}" 
+                       class="text-blue-600 hover:text-blue-800 font-medium">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination could be added here -->
+        <div class="mt-8 text-center">
+            <p class="text-gray-600">Showing {{ slips|length }} most recent slips</p>
+        </div>
+    {% else %}
+        <div class="text-center py-16">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-2xl font-semibold mb-4">No Pick Slips Yet</h2>
+            <p class="text-gray-600 mb-8">You haven't created any pick slips yet. Start building your first one!</p>
+            <a href="{{ url_for('fantasy_sports.pick_builder') }}" 
+               class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                Create Your First Slip
+            </a>
+        </div>
+    {% endif %}
+
+    <!-- Statistics Section -->
+    {% if slips %}
+    <div class="mt-12 bg-gray-50 rounded-lg p-6">
+        <h2 class="text-xl font-semibold mb-6">Your Stats</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {% set total_slips = slips|length %}
+            {% set won_slips = slips|selectattr("status", "equalto", "won")|list|length %}
+            {% set lost_slips = slips|selectattr("status", "equalto", "lost")|list|length %}
+            {% set pending_slips = slips|selectattr("status", "equalto", "pending")|list|length %}
+            {% set total_wagered = slips|sum(attribute="entry_fee") %}
+            {% set total_winnings = slips|sum(attribute="actual_payout") %}
+            
+            <div class="text-center">
+                <div class="text-2xl font-bold text-blue-600">{{ total_slips }}</div>
+                <div class="text-gray-600">Total Slips</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">{{ won_slips }}</div>
+                <div class="text-gray-600">Won</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-red-600">{{ lost_slips }}</div>
+                <div class="text-gray-600">Lost</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-yellow-600">{{ pending_slips }}</div>
+                <div class="text-gray-600">Pending</div>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 pt-6 border-t">
+            <div class="text-center">
+                <div class="text-2xl font-bold">${{ "%.2f"|format(total_wagered) }}</div>
+                <div class="text-gray-600">Total Wagered</div>
+            </div>
+            <div class="text-center">
+                <div class="text-2xl font-bold text-green-600">${{ "%.2f"|format(total_winnings) }}</div>
+                <div class="text-gray-600">Total Winnings</div>
+            </div>
+        </div>
+        
+        {% if (won_slips + lost_slips) > 0 %}
+        <div class="mt-4 text-center">
+            <div class="text-lg">
+                Win Rate: <span class="font-semibold">{{ "%.1f"|format((won_slips / (won_slips + lost_slips)) * 100) }}%</span>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}

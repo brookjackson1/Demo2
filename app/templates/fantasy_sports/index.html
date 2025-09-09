@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Fantasy Sports - Home{% endblock %}
+
+{% block content %}
+<div class="hero-section bg-gradient-to-r from-blue-600 to-purple-600 text-white py-16">
+    <div class="container mx-auto px-4 text-center">
+        <h1 class="text-5xl font-bold mb-4">Welcome to Fantasy Sports</h1>
+        <p class="text-xl mb-8">Pick your players, beat the odds, win big!</p>
+        <a href="{{ url_for('fantasy_sports.pick_builder') }}" class="bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+            Start Building Picks
+        </a>
+    </div>
+</div>
+
+<div class="container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold mb-4">Choose Your Sport</h2>
+        <p class="text-gray-600">Select from professional and college sports</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- NFL Card -->
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+            <div class="bg-gradient-to-br from-green-600 to-blue-800 p-6 text-white text-center">
+                <div class="text-4xl mb-3">🏈</div>
+                <h3 class="text-xl font-semibold mb-2">NFL</h3>
+                <p class="text-sm opacity-90">National Football League</p>
+            </div>
+            <div class="p-4 text-center">
+                <div class="flex justify-center space-x-2 mb-4">
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Pass Yds</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">Rush Yds</span>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">Rec Yds</span>
+                </div>
+                <a href="{{ url_for('fantasy_sports.nfl') }}" 
+                   class="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition-colors inline-block w-full">
+                    View NFL Props
+                </a>
+            </div>
+        </div>
+
+        <!-- MLB Card -->
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+            <div class="bg-gradient-to-br from-red-600 to-blue-600 p-6 text-white text-center">
+                <div class="text-4xl mb-3">⚾</div>
+                <h3 class="text-xl font-semibold mb-2">MLB</h3>
+                <p class="text-sm opacity-90">Major League Baseball</p>
+            </div>
+            <div class="p-4 text-center">
+                <div class="flex justify-center space-x-2 mb-4">
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Hits</span>
+                    <span class="bg-orange-100 text-orange-700 px-2 py-1 rounded text-xs">HRs</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">RBIs</span>
+                </div>
+                <a href="{{ url_for('fantasy_sports.mlb') }}" 
+                   class="bg-red-600 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors inline-block w-full">
+                    View MLB Props
+                </a>
+            </div>
+        </div>
+
+        <!-- NBA Card -->
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+            <div class="bg-gradient-to-br from-orange-600 to-red-600 p-6 text-white text-center">
+                <div class="text-4xl mb-3">🏀</div>
+                <h3 class="text-xl font-semibold mb-2">NBA</h3>
+                <p class="text-sm opacity-90">National Basketball Association</p>
+            </div>
+            <div class="p-4 text-center">
+                <div class="flex justify-center space-x-2 mb-4">
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Points</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">Rebounds</span>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Assists</span>
+                </div>
+                <a href="{{ url_for('fantasy_sports.nba') }}" 
+                   class="bg-orange-600 text-white px-6 py-2 rounded hover:bg-orange-700 transition-colors inline-block w-full">
+                    View NBA Props
+                </a>
+            </div>
+        </div>
+
+        <!-- Soccer Card -->
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden">
+            <div class="bg-gradient-to-br from-green-500 to-blue-600 p-6 text-white text-center">
+                <div class="text-4xl mb-3">⚽</div>
+                <h3 class="text-xl font-semibold mb-2">Soccer</h3>
+                <p class="text-sm opacity-90">MLS & NCAA Soccer</p>
+            </div>
+            <div class="p-4 text-center">
+                <div class="flex justify-center space-x-2 mb-4">
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs">Goals</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">Assists</span>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">Shots</span>
+                </div>
+                <a href="{{ url_for('fantasy_sports.soccer') }}" 
+                   class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-600 transition-colors inline-block w-full">
+                    View Soccer Props
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-16 bg-gray-50 rounded-lg p-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <span class="text-green-600 font-bold">1</span>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Pick Your Players</h3>
+                <p class="text-gray-600">Choose from thousands of player props across all major sports</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span class="text-blue-600 font-bold">2</span>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Make Your Predictions</h3>
+                <p class="text-gray-600">Pick over or under on player stats like points, yards, rebounds</p>
+            </div>
+            <div class="text-center">
+                <div class="w-12 h-12 mx-auto mb-4 bg-purple-100 rounded-full flex items-center justify-center">
+                    <span class="text-purple-600 font-bold">3</span>
+                </div>
+                <h3 class="text-lg font-semibold mb-2">Win Big</h3>
+                <p class="text-gray-600">Get all picks right and multiply your entry fee up to 50x!</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-12 text-center">
+        <h3 class="text-2xl font-bold mb-4">Quick Links</h3>
+        <div class="flex justify-center space-x-4 flex-wrap">
+            <a href="{{ url_for('fantasy_sports.pick_builder') }}" 
+               class="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 transition-colors mb-2">
+                Pick Builder
+            </a>
+            <a href="{{ url_for('fantasy_sports.player_gallery') }}" 
+               class="bg-purple-600 text-white px-6 py-3 rounded hover:bg-purple-700 transition-colors mb-2">
+                Player Gallery
+            </a>
+            <a href="{{ url_for('fantasy_sports.sports_list') }}" 
+               class="bg-gray-600 text-white px-6 py-3 rounded hover:bg-gray-700 transition-colors mb-2">
+                All Sports
+            </a>
+            <a href="{{ url_for('fantasy_sports.my_picks') }}" 
+               class="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 transition-colors mb-2">
+                My Picks
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}

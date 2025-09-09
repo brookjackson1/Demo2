@@ -23,36 +23,274 @@
 <option value="nhl">NHL</option>
 {% endblock %}
 
+{% block content %}
+{{ super() }}
+
+<!-- NHL Specific Features -->
+<div class="container mx-auto px-4 py-8">
+    <!-- NHL Season Info -->
+    <div class="bg-gradient-to-r from-blue-700 to-cyan-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="text-xl font-bold mb-2">2024-25 NHL Season</h3>
+                <p class="opacity-90">Regular season in progress • 82 games per team</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold" id="nhl-games-today">-</div>
+                <div class="text-sm opacity-75">Games Today</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Featured NHL Stars Showcase -->
+    <div class="bg-gradient-to-r from-blue-700 to-cyan-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="text-2xl mr-2">⭐</span>
+            NHL Superstars
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="nhl-superstars">
+            <!-- NHL superstars will be loaded here -->
+        </div>
+    </div>
+
+    <!-- NHL Prop Categories -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="text-2xl mr-2">🎯</span>
+            Popular Hockey Props
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            <button class="stat-category-btn bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-4 text-center transition-colors" data-stat="goals">
+                <div class="text-2xl mb-2">🥅</div>
+                <div class="font-semibold text-red-700">Goals</div>
+                <div class="text-xs text-red-600">Goal Scorer</div>
+            </button>
+            <button class="stat-category-btn bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center transition-colors" data-stat="assists">
+                <div class="text-2xl mb-2">🎯</div>
+                <div class="font-semibold text-blue-700">Assists</div>
+                <div class="text-xs text-blue-600">Helper</div>
+            </button>
+            <button class="stat-category-btn bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-center transition-colors" data-stat="points">
+                <div class="text-2xl mb-2">📊</div>
+                <div class="font-semibold text-green-700">Points</div>
+                <div class="text-xs text-green-600">Goals + Assists</div>
+            </button>
+            <button class="stat-category-btn bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-4 text-center transition-colors" data-stat="shots">
+                <div class="text-2xl mb-2">🏒</div>
+                <div class="font-semibold text-purple-700">Shots</div>
+                <div class="text-xs text-purple-600">Shots on Goal</div>
+            </button>
+            <button class="stat-category-btn bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-lg p-4 text-center transition-colors" data-stat="saves">
+                <div class="text-2xl mb-2">🥅</div>
+                <div class="font-semibold text-indigo-700">Saves</div>
+                <div class="text-xs text-indigo-600">Goalie Saves</div>
+            </button>
+            <button class="stat-category-btn bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-lg p-4 text-center transition-colors" data-stat="time_on_ice">
+                <div class="text-2xl mb-2">⏱️</div>
+                <div class="font-semibold text-orange-700">TOI</div>
+                <div class="text-xs text-orange-600">Time on Ice</div>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
 {% block sport_scripts %}
 <script>
-// NHL-specific customizations
-document.addEventListener('DOMContentLoaded', function() {
-    // Update the sport navigation to highlight NHL
-    document.querySelectorAll('.sport-nav-btn').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector('[data-sport="nhl"]')?.classList.add('active');
-    
-    // NHL-specific prop type mappings
-    const nhlPropTypes = {
-        'goals': 'Goals',
-        'assists': 'Assists', 
-        'points': 'Points',
-        'shots': 'Shots on Goal',
-        'saves': 'Saves',
-        'time_on_ice': 'Time on Ice'
-    };
-    
-    // Add NHL navigation if not present
-    const sportsNav = document.querySelector('.sport-nav-btn[data-sport="soccer"]')?.parentElement;
-    if (sportsNav && !document.querySelector('[data-sport="nhl"]')) {
-        const nhlBtn = document.createElement('a');
-        nhlBtn.href = "{{ url_for('fantasy_sports.nhl') }}";
-        nhlBtn.className = "sport-nav-btn active";
-        nhlBtn.setAttribute('data-sport', 'nhl');
-        nhlBtn.innerHTML = '🏒 NHL';
-        sportsNav.appendChild(nhlBtn);
+// NHL-specific functionality
+class NHLPage extends SportPage {
+    constructor(config) {
+        super(config);
+        this.loadNHLSpecificData();
+        this.bindNHLEvents();
     }
+    
+    async loadNHLSpecificData() {
+        await this.loadNHLSuperstars();
+        await this.loadNHLStats();
+    }
+    
+    async loadNHLSuperstars() {
+        // Featured NHL superstars with reliable ESPN photo URLs
+        const nhlSuperstars = [
+            {
+                first_name: 'Connor',
+                last_name: 'McDavid',
+                position: 'C',
+                team_short_name: 'EDM',
+                player_id: 301,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/4024.png&w=350&h=254'
+            },
+            {
+                first_name: 'Leon',
+                last_name: 'Draisaitl',
+                position: 'C',
+                team_short_name: 'EDM',
+                player_id: 302,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/4017832.png&w=350&h=254'
+            },
+            {
+                first_name: 'Nathan',
+                last_name: 'MacKinnon',
+                position: 'C',
+                team_short_name: 'COL',
+                player_id: 303,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/4024709.png&w=350&h=254'
+            },
+            {
+                first_name: 'David',
+                last_name: 'Pastrnak',
+                position: 'RW',
+                team_short_name: 'BOS',
+                player_id: 304,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/4024851.png&w=350&h=254'
+            },
+            {
+                first_name: 'Auston',
+                last_name: 'Matthews',
+                position: 'C',
+                team_short_name: 'TOR',
+                player_id: 305,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/3899996.png&w=350&h=254'
+            },
+            {
+                first_name: 'Erik',
+                last_name: 'Karlsson',
+                position: 'D',
+                team_short_name: 'PIT',
+                player_id: 306,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/3114.png&w=350&h=254'
+            },
+            {
+                first_name: 'Nikita',
+                last_name: 'Kucherov',
+                position: 'RW',
+                team_short_name: 'TBL',
+                player_id: 307,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/3899913.png&w=350&h=254'
+            },
+            {
+                first_name: 'Cale',
+                last_name: 'Makar',
+                position: 'D',
+                team_short_name: 'COL',
+                player_id: 308,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nhl/players/full/4233652.png&w=350&h=254'
+            }
+        ];
+        
+        try {
+            const container = document.getElementById('nhl-superstars');
+            container.innerHTML = '';
+            
+            nhlSuperstars.forEach(player => {
+                const playerCard = document.createElement('div');
+                playerCard.className = 'bg-white bg-opacity-20 rounded-lg p-4 text-center hover:bg-opacity-30 transition-colors cursor-pointer';
+                playerCard.innerHTML = `
+                    <div class="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden bg-white">
+                        <img src="${player.photo_url}" 
+                             alt="${player.first_name} ${player.last_name}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='https://via.placeholder.com/64x64/1e40af/ffffff?text=${player.first_name[0]}${player.last_name[0]}'">
+                    </div>
+                    <div class="font-semibold text-sm">${player.first_name} ${player.last_name}</div>
+                    <div class="text-xs opacity-75 mb-2">${player.team_short_name || 'NHL'} - ${player.position || 'Player'}</div>
+                    <div class="text-lg">🏒</div>
+                `;
+                
+                playerCard.addEventListener('click', () => {
+                    this.filterPropsByPlayer(player.player_id);
+                });
+                
+                container.appendChild(playerCard);
+            });
+            
+        } catch (error) {
+            console.error('Error loading NHL superstars:', error);
+            const container = document.getElementById('nhl-superstars');
+            container.innerHTML = '<div class="col-span-full text-center py-4 text-white opacity-75">Unable to load players</div>';
+        }
+    }
+    
+    async loadNHLStats() {
+        try {
+            // Count today's NHL games
+            const response = await fetch('/fantasy-sports/api/games');
+            const data = await response.json();
+            
+            if (data.success) {
+                const today = new Date().toDateString();
+                const todayGames = data.games.filter(g => {
+                    return g.sport_name === 'Hockey' && 
+                           new Date(g.game_date).toDateString() === today;
+                });
+                
+                document.getElementById('nhl-games-today').textContent = todayGames.length;
+            }
+        } catch (error) {
+            console.error('Error loading NHL stats:', error);
+            document.getElementById('nhl-games-today').textContent = '0';
+        }
+    }
+    
+    bindNHLEvents() {
+        // Stat category buttons
+        document.querySelectorAll('.stat-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const stat = e.currentTarget.dataset.stat;
+                this.filterPropsByStat(stat);
+                
+                // Switch to props tab
+                this.switchTab('props');
+                
+                // Highlight selected category
+                document.querySelectorAll('.stat-category-btn').forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+                e.currentTarget.classList.add('ring-2', 'ring-blue-500');
+            });
+        });
+    }
+    
+    async filterPropsByStat(stat) {
+        try {
+            // Map stat to prop type
+            const statMap = {
+                'goals': 'Goals',
+                'assists': 'Assists',
+                'points': 'Points',
+                'shots': 'Shots on Goal',
+                'saves': 'Saves',
+                'time_on_ice': 'Time on Ice'
+            };
+            
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&prop_type=${statMap[stat]}&limit=50`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+            }
+        } catch (error) {
+            console.error('Error filtering props by stat:', error);
+        }
+    }
+    
+    async filterPropsByPlayer(playerId) {
+        try {
+            const response = await fetch(`/fantasy-sports/api/player-props?player_id=${playerId}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+                this.switchTab('props');
+            }
+        } catch (error) {
+            console.error('Error filtering props by player:', error);
+        }
+    }
+}
+
+// Override the SportPage initialization for NHL
+document.addEventListener('DOMContentLoaded', () => {
+    new NHLPage(sportConfig);
 });
 </script>
 {% endblock %}

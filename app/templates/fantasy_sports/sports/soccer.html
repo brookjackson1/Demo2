@@ -1,0 +1,327 @@
+{% extends "fantasy_sports/sports/base_sport.html" %}
+
+{% block sport_title %}Soccer{% endblock %}
+{% block sport_gradient %}from-green-50 to-blue-100{% endblock %}
+{% block sport_header_bg %}bg-gradient-to-r from-green-500 to-blue-600{% endblock %}
+{% block sport_icon_bg %}bg-white bg-opacity-20{% endblock %}
+{% block sport_icon %}⚽{% endblock %}
+{% block sport_name %}Soccer{% endblock %}
+{% block sport_subtitle %}Bet on soccer player props - Goals, assists, shots and more{% endblock %}
+{% block sport_slip_bg %}bg-green-600{% endblock %}
+{% block sport_slip_hover %}bg-green-700{% endblock %}
+
+{% block sport_prop_options %}
+<option value="goals">Goals</option>
+<option value="assists">Assists</option>
+<option value="shots_on_goal">Shots on Goal</option>
+<option value="saves">Saves (Goalkeeper)</option>
+{% endblock %}
+
+{% block sport_league_options %}
+<option value="mls">Major League Soccer</option>
+<option value="ncaa_soccer">NCAA Soccer</option>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<!-- Soccer Specific Features -->
+<div class="container mx-auto px-4 py-8">
+    <!-- Soccer League Info -->
+    <div class="bg-gradient-to-r from-green-500 to-blue-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="text-xl font-bold mb-2">MLS & NCAA Soccer</h3>
+                <p class="opacity-90">Professional and collegiate soccer props available</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold" id="soccer-matches-today">-</div>
+                <div class="text-sm opacity-75">Matches Today</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Soccer Position Categories -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="text-2xl mr-2">⚽</span>
+            Props by Position
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <button class="position-category-btn bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-6 text-center transition-colors" data-position="FW">
+                <div class="text-3xl mb-3">🏃</div>
+                <div class="font-bold text-lg text-red-700 mb-2">Forwards</div>
+                <div class="text-sm text-red-600 mb-3">Goals, shots, assists</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded">Goals</span>
+                    <span class="bg-red-100 text-red-700 px-2 py-1 rounded">Shots</span>
+                </div>
+            </button>
+            
+            <button class="position-category-btn bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-6 text-center transition-colors" data-position="MF">
+                <div class="text-3xl mb-3">🎯</div>
+                <div class="font-bold text-lg text-blue-700 mb-2">Midfielders</div>
+                <div class="text-sm text-blue-600 mb-3">Assists, passes, tackles</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Assists</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Passes</span>
+                </div>
+            </button>
+            
+            <button class="position-category-btn bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-6 text-center transition-colors" data-position="DF">
+                <div class="text-3xl mb-3">🛡️</div>
+                <div class="font-bold text-lg text-green-700 mb-2">Defenders</div>
+                <div class="text-sm text-green-600 mb-3">Tackles, interceptions</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded">Tackles</span>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded">Blocks</span>
+                </div>
+            </button>
+            
+            <button class="position-category-btn bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-6 text-center transition-colors" data-position="GK">
+                <div class="text-3xl mb-3">🥅</div>
+                <div class="font-bold text-lg text-purple-700 mb-2">Goalkeepers</div>
+                <div class="text-sm text-purple-600 mb-3">Saves, clean sheets</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">Saves</span>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">Goals Against</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Popular Soccer Props -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="text-2xl mr-2">🔥</span>
+            Popular Soccer Props
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button class="prop-category-btn bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-4 text-center transition-colors" data-prop="goals">
+                <div class="text-2xl mb-2">⚽</div>
+                <div class="font-semibold text-red-700">Goals</div>
+                <div class="text-xs text-red-600">Player Goals O/U</div>
+            </button>
+            <button class="prop-category-btn bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center transition-colors" data-prop="assists">
+                <div class="text-2xl mb-2">🎯</div>
+                <div class="font-semibold text-blue-700">Assists</div>
+                <div class="text-xs text-blue-600">Player Assists</div>
+            </button>
+            <button class="prop-category-btn bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-center transition-colors" data-prop="shots_on_goal">
+                <div class="text-2xl mb-2">🎪</div>
+                <div class="font-semibold text-green-700">Shots on Goal</div>
+                <div class="text-xs text-green-600">SOG O/U</div>
+            </button>
+            <button class="prop-category-btn bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-4 text-center transition-colors" data-prop="saves">
+                <div class="text-2xl mb-2">🥅</div>
+                <div class="font-semibold text-purple-700">Saves</div>
+                <div class="text-xs text-purple-600">Goalkeeper Saves</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Soccer Leagues Showcase -->
+    <div class="bg-gradient-to-r from-green-600 to-blue-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="text-2xl mr-2">🏆</span>
+            Featured Leagues
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white bg-opacity-20 rounded-lg p-4 text-center hover:bg-opacity-30 transition-colors cursor-pointer league-btn" data-league="mls">
+                <div class="text-2xl mb-2">🇺🇸</div>
+                <div class="font-semibold text-lg mb-1">Major League Soccer</div>
+                <div class="text-sm opacity-75">MLS Regular Season</div>
+            </div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-4 text-center hover:bg-opacity-30 transition-colors cursor-pointer league-btn" data-league="ncaa">
+                <div class="text-2xl mb-2">🎓</div>
+                <div class="font-semibold text-lg mb-1">NCAA Soccer</div>
+                <div class="text-sm opacity-75">College Soccer Championships</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Formats -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="text-2xl mr-2">⚽</span>
+            Match Information
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-green-50 rounded-lg">
+                <div class="text-2xl font-bold text-green-600 mb-2">90'</div>
+                <div class="text-sm text-green-700">Regular Time</div>
+                <div class="text-xs text-green-600">Plus injury time</div>
+            </div>
+            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                <div class="text-2xl font-bold text-blue-600 mb-2">2.5</div>
+                <div class="text-sm text-blue-700">Avg Goals/Game</div>
+                <div class="text-xs text-blue-600">MLS average</div>
+            </div>
+            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                <div class="text-2xl font-bold text-purple-600 mb-2">11v11</div>
+                <div class="text-sm text-purple-700">Players per side</div>
+                <div class="text-xs text-purple-600">Including goalkeeper</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block sport_scripts %}
+<script>
+// Soccer-specific functionality
+class SoccerPage extends SportPage {
+    constructor(config) {
+        super(config);
+        this.loadSoccerSpecificData();
+        this.bindSoccerEvents();
+    }
+    
+    async loadSoccerSpecificData() {
+        await this.loadSoccerStats();
+    }
+    
+    async loadSoccerStats() {
+        try {
+            // Count today's soccer matches
+            const response = await fetch('/fantasy-sports/api/games');
+            const data = await response.json();
+            
+            if (data.success) {
+                const today = new Date().toDateString();
+                const todayMatches = data.games.filter(g => {
+                    return g.sport_name === 'Soccer' && 
+                           new Date(g.game_date).toDateString() === today;
+                });
+                
+                document.getElementById('soccer-matches-today').textContent = todayMatches.length;
+            }
+        } catch (error) {
+            console.error('Error loading soccer stats:', error);
+            document.getElementById('soccer-matches-today').textContent = '0';
+        }
+    }
+    
+    bindSoccerEvents() {
+        // Position category buttons
+        document.querySelectorAll('.position-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const position = e.currentTarget.dataset.position;
+                this.filterPropsByPosition(position);
+                
+                // Switch to props tab
+                this.switchTab('props');
+                
+                // Highlight selected category
+                document.querySelectorAll('.position-category-btn').forEach(b => b.classList.remove('ring-2', 'ring-green-500'));
+                e.currentTarget.classList.add('ring-2', 'ring-green-500');
+            });
+        });
+        
+        // Prop category filter buttons
+        document.querySelectorAll('.prop-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const propType = e.currentTarget.dataset.prop;
+                this.filterPropsByType(propType);
+                
+                // Switch to props tab
+                this.switchTab('props');
+                
+                // Highlight selected category
+                document.querySelectorAll('.prop-category-btn').forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+                e.currentTarget.classList.add('ring-2', 'ring-blue-500');
+            });
+        });
+        
+        // League filter buttons
+        document.querySelectorAll('.league-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const league = e.currentTarget.dataset.league;
+                this.filterPropsByLeague(league);
+                
+                // Switch to props tab
+                this.switchTab('props');
+            });
+        });
+    }
+    
+    async filterPropsByPosition(position) {
+        try {
+            const response = await fetch(`/fantasy-sports/api/players?sport_id=${this.sportId}&position=${position}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                // Get all props for players in this position
+                const playerIds = data.players.map(p => p.player_id);
+                
+                // Filter current props by these players
+                const propsResponse = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=100`);
+                const propsData = await propsResponse.json();
+                
+                if (propsData.success) {
+                    const filteredProps = propsData.props.filter(prop => 
+                        playerIds.includes(prop.player_id)
+                    );
+                    this.renderProps(filteredProps);
+                }
+            }
+        } catch (error) {
+            console.error('Error filtering props by position:', error);
+        }
+    }
+    
+    async filterPropsByType(propType) {
+        try {
+            // Map prop type to filter
+            const propTypeMap = {
+                'goals': 'Goals',
+                'assists': 'Assists',
+                'shots_on_goal': 'Shots on Goal',
+                'saves': 'Saves'
+            };
+            
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&prop_type=${propTypeMap[propType]}&limit=50`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+            }
+        } catch (error) {
+            console.error('Error filtering props:', error);
+        }
+    }
+    
+    async filterPropsByLeague(league) {
+        try {
+            // Map league to league name
+            const leagueMap = {
+                'mls': 'Major League Soccer',
+                'ncaa': 'NCAA Soccer'
+            };
+            
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&league=${leagueMap[league]}&limit=50`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+            } else {
+                // If no specific league filter available, show all soccer props
+                const allPropsResponse = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=50`);
+                const allPropsData = await allPropsResponse.json();
+                
+                if (allPropsData.success) {
+                    this.renderProps(allPropsData.props);
+                }
+            }
+        } catch (error) {
+            console.error('Error filtering props by league:', error);
+        }
+    }
+}
+
+// Override the SportPage initialization for Soccer
+document.addEventListener('DOMContentLoaded', () => {
+    new SoccerPage(sportConfig);
+});
+</script>
+{% endblock %}

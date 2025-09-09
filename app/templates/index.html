@@ -2,80 +2,527 @@
 
 {% block content %}
 
-<div class="text-center">
-    <div class="card shadow-lg p-5 mb-5">
-        <h1 class="display-4 mb-3">
-            <i class="fas fa-graduation-cap me-3"></i>Georgia College & State University
-        </h1>
-        <h2 class="h3 text-muted mb-4">MIS Flask Starter Kit</h2>
-        
-        <div class="mb-4">
-            <img src="https://blog.ipleaders.in/wp-content/uploads/2021/05/skill-based-games.jpg" 
-                 alt="Skill-based games illustration" 
-                 class="img-fluid rounded shadow" 
-                 style="max-height: 300px; object-fit: cover;">
-        </div>
-        
-        <p class="lead mb-4">Welcome to GCSU's Flask development environment! This starter kit provides a foundation for building web applications using Python and Flask.</p>
-        
-        <div class="row justify-content-center mb-4">
-            <div class="col-md-10">
-                <p class="mb-0">Georgia College & State University, located in Milledgeville, Georgia, is a public liberal arts university known for its commitment to undergraduate education and student success. Our MIS program prepares students with practical skills in software development, data analysis, and modern web technologies for business applications.</p>
-            </div>
-        </div>
-        
-        <div class="row justify-content-center">
-            <div class="col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-code fa-3x mb-3" style="color: var(--gcsu-blue);"></i>
-                        <h5 class="card-title">Modern Development</h5>
-                        <p class="card-text">Built with Flask, Bootstrap, and modern web technologies for responsive design.</p>
+<!-- ESPN-style Sports Header -->
+<div class="espn-header">
+    <div class="container-fluid">
+        <div class="row align-items-center py-4">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center">
+                    <div class="espn-logo me-4">
+                        <h1 class="display-4 fw-bold text-white mb-0">
+                            <span class="text-danger">SPORTS</span><span class="text-white">CENTER</span>
+                        </h1>
+                        <div class="tagline text-white-50">The Worldwide Leader in Sports</div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="card h-100">
-                    <div class="card-body text-center">
-                        <i class="fas fa-database fa-3x mb-3" style="color: var(--gcsu-green);"></i>
-                        <h5 class="card-title">Database Ready</h5>
-                        <p class="card-text">Pre-configured for MySQL/PostgreSQL with example CRUD operations.</p>
+            <div class="col-md-6">
+                <div class="live-updates text-white text-end">
+                    <div class="ticker-tape">
+                        <span class="live-indicator">🔴 LIVE</span>
+                        <span class="ticker-text">NFL: Chiefs 24-17 Bills • NBA: Lakers lead Celtics 89-82 • MLB: Yankees advance to playoffs</span>
                     </div>
                 </div>
             </div>
         </div>
-        
-        <div class="mt-4">
-            <a href="{{ url_for('fantasy_sports.index') }}" class="btn btn-primary btn-lg me-3">
-                <i class="fas fa-trophy me-2"></i>Fantasy Sports App
+    </div>
+</div>
+
+<!-- ESPN-style Navigation Bar -->
+<nav class="espn-nav">
+    <div class="container-fluid">
+        <div class="d-flex justify-content-center overflow-auto">
+            <a href="{{ url_for('fantasy_sports.nfl') }}" class="nav-item">
+                <span class="sport-icon">🏈</span>
+                <span class="sport-name">NFL</span>
             </a>
-            <a href="{{ url_for('examples.show_examples') }}" class="btn btn-outline-primary btn-lg me-3">
-                <i class="fas fa-eye me-2"></i>View Examples
+            <a href="{{ url_for('fantasy_sports.nba') }}" class="nav-item">
+                <span class="sport-icon">🏀</span>
+                <span class="sport-name">NBA</span>
             </a>
-            <a href="{{ url_for('about') }}" class="btn btn-outline-secondary btn-lg">
-                <i class="fas fa-info-circle me-2"></i>Learn More
+            <a href="{{ url_for('fantasy_sports.mlb') }}" class="nav-item">
+                <span class="sport-icon">⚾</span>
+                <span class="sport-name">MLB</span>
             </a>
+            <a href="{{ url_for('fantasy_sports.nhl') }}" class="nav-item">
+                <span class="sport-icon">🏒</span>
+                <span class="sport-name">NHL</span>
+            </a>
+            <a href="{{ url_for('fantasy_sports.college_football') }}" class="nav-item">
+                <span class="sport-icon">🏈</span>
+                <span class="sport-name">NCAAF</span>
+            </a>
+            <a href="{{ url_for('fantasy_sports.college_basketball') }}" class="nav-item">
+                <span class="sport-icon">🏀</span>
+                <span class="sport-name">NCAAB</span>
+            </a>
+            <a href="{{ url_for('fantasy_sports.soccer') }}" class="nav-item">
+                <span class="sport-icon">⚽</span>
+                <span class="sport-name">SOCCER</span>
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Hero Section -->
+<div class="hero-section">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Main Featured Content -->
+            <div class="col-lg-8">
+                <div class="featured-story">
+                    <img src="https://blog.ipleaders.in/wp-content/uploads/2021/05/skill-based-games.jpg" 
+                         alt="Fantasy Sports Action" 
+                         class="img-fluid w-100 rounded-3">
+                    <div class="story-overlay">
+                        <div class="story-category">FANTASY SPORTS</div>
+                        <h2 class="story-title">Build Your Championship Team</h2>
+                        <p class="story-summary">Draft elite players, set your lineups, and compete for massive payouts in daily fantasy sports.</p>
+                        <a href="{{ url_for('fantasy_sports.index') }}" class="btn btn-espn">
+                            <i class="fas fa-play me-2"></i>Play Now
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="sidebar-content">
+                    <!-- Today's Games -->
+                    <div class="widget mb-4">
+                        <h3 class="widget-title">
+                            <i class="fas fa-calendar-day me-2"></i>Today's Games
+                        </h3>
+                        <div class="game-item">
+                            <div class="teams">
+                                <span class="away">KC Chiefs</span>
+                                <span class="vs">vs</span>
+                                <span class="home">BUF Bills</span>
+                            </div>
+                            <div class="game-time">8:15 PM ET</div>
+                        </div>
+                        <div class="game-item">
+                            <div class="teams">
+                                <span class="away">LAL Lakers</span>
+                                <span class="vs">vs</span>
+                                <span class="home">BOS Celtics</span>
+                            </div>
+                            <div class="game-time">10:30 PM ET</div>
+                        </div>
+                        <div class="game-item">
+                            <div class="teams">
+                                <span class="away">NYY Yankees</span>
+                                <span class="vs">vs</span>
+                                <span class="home">HOU Astros</span>
+                            </div>
+                            <div class="game-time">8:07 PM ET</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Trending -->
+                    <div class="widget">
+                        <h3 class="widget-title">
+                            <i class="fas fa-fire me-2"></i>Trending Now
+                        </h3>
+                        <div class="trending-item">
+                            <span class="trend-rank">#1</span>
+                            <span class="trend-text">Patrick Mahomes MVP odds</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trend-rank">#2</span>
+                            <span class="trend-text">LeBron James 40,000 points</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trend-rank">#3</span>
+                            <span class="trend-text">World Series predictions</span>
+                        </div>
+                        <div class="trending-item">
+                            <span class="trend-rank">#4</span>
+                            <span class="trend-text">Connor McDavid hat trick</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Access Sports Grid -->
+<div class="sports-grid">
+    <div class="container-fluid">
+        <h2 class="section-title">Sports Central</h2>
+        <div class="row">
+            <div class="col-md-3 col-6 mb-4">
+                <a href="{{ url_for('fantasy_sports.nfl') }}" class="sport-card nfl-card">
+                    <div class="sport-header">
+                        <span class="sport-logo">🏈</span>
+                        <h3>NFL</h3>
+                    </div>
+                    <div class="sport-stats">
+                        <div class="stat">Week 2 • 16 Games</div>
+                        <div class="highlight">Chiefs lead AFC West</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <a href="{{ url_for('fantasy_sports.nba') }}" class="sport-card nba-card">
+                    <div class="sport-header">
+                        <span class="sport-logo">🏀</span>
+                        <h3>NBA</h3>
+                    </div>
+                    <div class="sport-stats">
+                        <div class="stat">82-Game Season</div>
+                        <div class="highlight">Lakers vs Celtics tonight</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <a href="{{ url_for('fantasy_sports.mlb') }}" class="sport-card mlb-card">
+                    <div class="sport-header">
+                        <span class="sport-logo">⚾</span>
+                        <h3>MLB</h3>
+                    </div>
+                    <div class="sport-stats">
+                        <div class="stat">Playoff Race</div>
+                        <div class="highlight">Yankees clinch division</div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-3 col-6 mb-4">
+                <a href="{{ url_for('fantasy_sports.nhl') }}" class="sport-card nhl-card">
+                    <div class="sport-header">
+                        <span class="sport-logo">🏒</span>
+                        <h3>NHL</h3>
+                    </div>
+                    <div class="sport-stats">
+                        <div class="stat">Regular Season</div>
+                        <div class="highlight">McDavid leads scoring</div>
+                    </div>
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    .card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
+    /* ESPN-style Header */
+    .espn-header {
+        background: linear-gradient(135deg, #1a1a1a, #333333);
+        border-bottom: 4px solid #d50000;
+        min-height: 80px;
     }
     
-    .btn-outline-secondary {
-        border-color: var(--gcsu-blue);
-        color: var(--gcsu-blue);
+    .tagline {
+        font-size: 0.8rem;
+        font-weight: 300;
+        letter-spacing: 0.5px;
     }
     
-    .btn-outline-secondary:hover {
-        background-color: var(--gcsu-blue);
-        border-color: var(--gcsu-blue);
+    .live-indicator {
+        background: #d50000;
         color: white;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-right: 10px;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+    
+    .ticker-text {
+        font-size: 0.9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        animation: scroll-left 30s linear infinite;
+    }
+    
+    @keyframes scroll-left {
+        0% { transform: translateX(100%); }
+        100% { transform: translateX(-100%); }
+    }
+    
+    /* ESPN Navigation */
+    .espn-nav {
+        background: #f7f7f7;
+        border-bottom: 1px solid #e0e0e0;
+        padding: 8px 0;
+    }
+    
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 8px 16px;
+        text-decoration: none;
+        color: #333;
+        transition: all 0.3s ease;
+        border-radius: 8px;
+        margin: 0 4px;
+        min-width: 80px;
+    }
+    
+    .nav-item:hover {
+        background: #e8e8e8;
+        color: #d50000;
+        text-decoration: none;
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 51, 153, 0.3);
+    }
+    
+    .sport-icon {
+        font-size: 1.5rem;
+        margin-bottom: 4px;
+    }
+    
+    .sport-name {
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Hero Section */
+    .hero-section {
+        background: #f8f9fa;
+        padding: 20px 0;
+    }
+    
+    .featured-story {
+        position: relative;
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .story-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        padding: 40px 30px 30px;
+        color: white;
+    }
+    
+    .story-category {
+        background: #d50000;
+        color: white;
+        padding: 4px 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        letter-spacing: 0.5px;
+        border-radius: 4px;
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+    
+    .story-title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        margin-bottom: 12px;
+        line-height: 1.2;
+    }
+    
+    .story-summary {
+        font-size: 1rem;
+        margin-bottom: 20px;
+        opacity: 0.9;
+    }
+    
+    .btn-espn {
+        background: #d50000;
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        font-weight: bold;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-espn:hover {
+        background: #b71c1c;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(213, 0, 0, 0.3);
+        color: white;
+    }
+    
+    /* Sidebar Widgets */
+    .sidebar-content {
+        padding-left: 20px;
+    }
+    
+    .widget {
+        background: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #d50000;
+    }
+    
+    .widget-title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        margin-bottom: 16px;
+        color: #333;
+    }
+    
+    .game-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .game-item:last-child {
+        border-bottom: none;
+    }
+    
+    .teams {
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .vs {
+        margin: 0 8px;
+        color: #666;
+        font-size: 0.8rem;
+    }
+    
+    .game-time {
+        font-size: 0.8rem;
+        color: #d50000;
+        font-weight: bold;
+    }
+    
+    .trending-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .trending-item:last-child {
+        border-bottom: none;
+    }
+    
+    .trend-rank {
+        background: #333;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-right: 12px;
+    }
+    
+    .trend-text {
+        font-size: 0.9rem;
+        color: #333;
+    }
+    
+    /* Sports Grid */
+    .sports-grid {
+        background: #f8f9fa;
+        padding: 40px 0;
+    }
+    
+    .section-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #333;
+    }
+    
+    .sport-card {
+        display: block;
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        text-decoration: none;
+        color: inherit;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        height: 140px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .sport-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .sport-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+    }
+    
+    .sport-logo {
+        font-size: 2rem;
+        margin-right: 12px;
+    }
+    
+    .sport-header h3 {
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin: 0;
+    }
+    
+    .sport-stats {
+        font-size: 0.9rem;
+        color: #666;
+    }
+    
+    .stat {
+        margin-bottom: 4px;
+    }
+    
+    .highlight {
+        color: #d50000;
+        font-weight: 600;
+    }
+    
+    /* Sport-specific colors */
+    .nfl-card { border-left: 5px solid #013369; }
+    .nba-card { border-left: 5px solid #c8102e; }
+    .mlb-card { border-left: 5px solid #041e42; }
+    .nhl-card { border-left: 5px solid #000000; }
+    
+    .nfl-card:hover .sport-logo { color: #013369; }
+    .nba-card:hover .sport-logo { color: #c8102e; }
+    .mlb-card:hover .sport-logo { color: #041e42; }
+    .nhl-card:hover .sport-logo { color: #000000; }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .story-title { font-size: 1.6rem; }
+        .sidebar-content { padding-left: 0; margin-top: 20px; }
+        .ticker-text { font-size: 0.8rem; }
+        .nav-item { min-width: 60px; padding: 6px 10px; }
+        .sport-icon { font-size: 1.2rem; }
+        .sport-name { font-size: 0.65rem; }
+    }
+    
+    @media (max-width: 576px) {
+        .espn-header { min-height: 60px; }
+        .display-4 { font-size: 1.8rem; }
+        .story-overlay { padding: 20px 15px 15px; }
+        .sport-card { height: 120px; padding: 15px; }
     }
 </style>
 

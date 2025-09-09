@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}Fantasy Sports - Pick Builder{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Pick Builder</h1>
+        <a href="{{ url_for('fantasy_sports.index') }}" class="text-blue-600 hover:text-blue-800">
+            ← Back to Home
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Panel - Pick Selection -->
+        <div class="lg:col-span-2">
+            <!-- Sport Filter -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-lg font-semibold mb-4">Filter by Sport</h3>
+                <div class="flex flex-wrap gap-2">
+                    <button class="sport-filter-btn active" data-sport-id="all">
+                        All Sports
+                    </button>
+                    {% for sport in sports %}
+                    <button class="sport-filter-btn" data-sport-id="{{ sport.sport_id }}">
+                        {{ sport.name }}
+                    </button>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Props List -->
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="p-6 border-b">
+                    <h3 class="text-lg font-semibold">Available Props</h3>
+                    <div class="mt-2">
+                        <input type="text" id="search-props" placeholder="Search players..." 
+                               class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+                <div id="props-container" class="max-h-96 overflow-y-auto">
+                    <!-- Props will be loaded here -->
+                    <div class="p-6 text-center text-gray-500">
+                        Loading props...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Pick Slip -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                <h3 class="text-lg font-semibold mb-4">Your Picks</h3>
+                
+                <div id="selected-picks" class="space-y-3 mb-6">
+                    <div id="empty-picks" class="text-center text-gray-500 py-8">
+                        <div class="text-4xl mb-2">🏆</div>
+                        <p>Select 2-6 picks to get started</p>
+                    </div>
+                </div>
+
+                <div id="pick-slip-summary" class="border-t pt-4" style="display: none;">
+                    <div class="space-y-2 mb-4">
+                        <div class="flex justify-between">
+                            <span>Entry Fee:</span>
+                            <div class="flex items-center">
+                                <span>$</span>
+                                <input type="number" id="entry-fee" value="10" min="1" max="1000" 
+                                       class="w-16 ml-1 px-2 py-1 border rounded text-right">
+                            </div>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Number of Picks:</span>
+                            <span id="num-picks">0</span>
+                        </div>
+                        <div class="flex justify-between font-semibold">
+                            <span>Potential Payout:</span>
+                            <span id="potential-payout">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-sm text-gray-600">
+                            <span>Multiplier:</span>
+                            <span id="payout-multiplier">0x</span>
+                        </div>
+                    </div>
+
+                    <button id="submit-slip" class="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors">
+                        Submit Pick Slip
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pick Card Template -->
+<template id="pick-card-template">
+    <div class="prop-card border rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer" data-prop-id="">
+        <div class="flex justify-between items-start mb-2">
+            <div>
+                <h4 class="font-semibold player-name"></h4>
+                <p class="text-sm text-gray-600 game-info"></p>
+            </div>
+            <div class="text-right">
+                <span class="text-xs text-gray-500 prop-type"></span>
+            </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <button class="pick-option over-option border rounded px-3 py-2 text-sm hover:bg-blue-50" data-selection="over">
+                <div class="font-semibold">Over</div>
+                <div class="line-value"></div>
+                <div class="text-xs text-gray-500 odds"></div>
+            </button>
+            <button class="pick-option under-option border rounded px-3 py-2 text-sm hover:bg-red-50" data-selection="under">
+                <div class="font-semibold">Under</div>
+                <div class="line-value"></div>
+                <div class="text-xs text-gray-500 odds"></div>
+            </button>
+        </div>
+    </div>
+</template>
+
+<!-- Selected Pick Template -->
+<template id="selected-pick-template">
+    <div class="selected-pick border rounded-lg p-3 bg-gray-50" data-prop-id="">
+        <div class="flex justify-between items-start mb-1">
+            <div class="flex-1">
+                <h5 class="font-medium text-sm player-name"></h5>
+                <p class="text-xs text-gray-600 prop-type"></p>
+            </div>
+            <button class="remove-pick text-red-500 hover:text-red-700">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        <div class="text-sm">
+            <span class="selection-text font-medium"></span>
+            <span class="line-value"></span>
+            <span class="odds text-gray-500 ml-2"></span>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+class PickBuilder {
+    constructor() {
+        this.selectedPicks = [];
+        this.allProps = [];
+        this.currentSportFilter = 'all';
+        
+        this.init();
+    }
+    
+    init() {
+        this.loadProps();
+        this.bindEvents();
+    }
+    
+    async loadProps() {
+        try {
+            const response = await fetch('/fantasy-sports/api/props?limit=100');
+            const data = await response.json();
+            
+            if (data.success) {
+                this.allProps = data.props;
+                this.renderProps();
+            }
+        } catch (error) {
+            console.error('Error loading props:', error);
+        }
+    }
+    
+    renderProps() {
+        const container = document.getElementById('props-container');
+        const template = document.getElementById('pick-card-template');
+        
+        let filteredProps = this.allProps;
+        if (this.currentSportFilter !== 'all') {
+            filteredProps = this.allProps.filter(prop => prop.sport_id == this.currentSportFilter);
+        }
+        
+        if (filteredProps.length === 0) {
+            container.innerHTML = '<div class="p-6 text-center text-gray-500">No props available</div>';
+            return;
+        }
+        
+        container.innerHTML = '';
+        
+        filteredProps.forEach(prop => {
+            const clone = template.content.cloneNode(true);
+            const card = clone.querySelector('.prop-card');
+            
+            card.dataset.propId = prop.prop_id;
+            
+            // Fill in data
+            clone.querySelector('.player-name').textContent = `${prop.first_name} ${prop.last_name}`;
+            clone.querySelector('.game-info').textContent = `${prop.away_team_short} @ ${prop.home_team_short}`;
+            clone.querySelector('.prop-type').textContent = prop.prop_type_name;
+            
+            // Over option
+            const overOption = clone.querySelector('.over-option');
+            overOption.querySelector('.line-value').textContent = `${prop.line_value}`;
+            overOption.querySelector('.odds').textContent = this.formatOdds(prop.over_odds);
+            
+            // Under option  
+            const underOption = clone.querySelector('.under-option');
+            underOption.querySelector('.line-value').textContent = `${prop.line_value}`;
+            underOption.querySelector('.odds').textContent = this.formatOdds(prop.under_odds);
+            
+            container.appendChild(clone);
+        });
+        
+        this.bindPickEvents();
+    }
+    
+    bindEvents() {
+        // Sport filter buttons
+        document.querySelectorAll('.sport-filter-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.sport-filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentSportFilter = e.target.dataset.sportId;
+                this.renderProps();
+            });
+        });
+        
+        // Entry fee input
+        document.getElementById('entry-fee').addEventListener('input', () => {
+            this.updatePayout();
+        });
+        
+        // Submit button
+        document.getElementById('submit-slip').addEventListener('click', () => {
+            this.submitSlip();
+        });
+    }
+    
+    bindPickEvents() {
+        document.querySelectorAll('.pick-option').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const propCard = e.target.closest('.prop-card');
+                const propId = propCard.dataset.propId;
+                const selection = e.target.dataset.selection;
+                
+                this.addPick(propId, selection);
+            });
+        });
+    }
+    
+    addPick(propId, selection) {
+        // Remove existing pick for this prop if any
+        this.selectedPicks = this.selectedPicks.filter(pick => pick.prop_id != propId);
+        
+        // Find the prop data
+        const prop = this.allProps.find(p => p.prop_id == propId);
+        if (!prop) return;
+        
+        // Add new pick
+        const pick = {
+            prop_id: propId,
+            selection: selection,
+            line_value: prop.line_value,
+            odds: selection === 'over' ? prop.over_odds : prop.under_odds,
+            player_name: `${prop.first_name} ${prop.last_name}`,
+            prop_type_name: prop.prop_type_name,
+            game_info: `${prop.away_team_short} @ ${prop.home_team_short}`
+        };
+        
+        this.selectedPicks.push(pick);
+        this.updatePickSlip();
+    }
+    
+    removePick(propId) {
+        this.selectedPicks = this.selectedPicks.filter(pick => pick.prop_id != propId);
+        this.updatePickSlip();
+    }
+    
+    updatePickSlip() {
+        const container = document.getElementById('selected-picks');
+        const summary = document.getElementById('pick-slip-summary');
+        const emptyState = document.getElementById('empty-picks');
+        const template = document.getElementById('selected-pick-template');
+        
+        // Clear existing picks
+        container.querySelectorAll('.selected-pick').forEach(el => el.remove());
+        
+        if (this.selectedPicks.length === 0) {
+            emptyState.style.display = 'block';
+            summary.style.display = 'none';
+            return;
+        }
+        
+        emptyState.style.display = 'none';
+        summary.style.display = 'block';
+        
+        // Render selected picks
+        this.selectedPicks.forEach(pick => {
+            const clone = template.content.cloneNode(true);
+            const pickEl = clone.querySelector('.selected-pick');
+            
+            pickEl.dataset.propId = pick.prop_id;
+            
+            clone.querySelector('.player-name').textContent = pick.player_name;
+            clone.querySelector('.prop-type').textContent = pick.prop_type_name;
+            clone.querySelector('.selection-text').textContent = pick.selection.toUpperCase();
+            clone.querySelector('.line-value').textContent = pick.line_value;
+            clone.querySelector('.odds').textContent = this.formatOdds(pick.odds);
+            
+            // Bind remove event
+            clone.querySelector('.remove-pick').addEventListener('click', () => {
+                this.removePick(pick.prop_id);
+            });
+            
+            container.appendChild(clone);
+        });
+        
+        this.updatePayout();
+    }
+    
+    async updatePayout() {
+        const entryFee = parseFloat(document.getElementById('entry-fee').value) || 0;
+        const numPicks = this.selectedPicks.length;
+        
+        document.getElementById('num-picks').textContent = numPicks;
+        
+        if (numPicks < 2) {
+            document.getElementById('potential-payout').textContent = '$0.00';
+            document.getElementById('payout-multiplier').textContent = '0x';
+            return;
+        }
+        
+        try {
+            const response = await fetch('/fantasy-sports/api/calculate-payout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    entry_fee: entryFee,
+                    picks: this.selectedPicks
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                document.getElementById('potential-payout').textContent = `$${data.potential_payout.toFixed(2)}`;
+                document.getElementById('payout-multiplier').textContent = `${data.multiplier}x`;
+            }
+        } catch (error) {
+            console.error('Error calculating payout:', error);
+        }
+    }
+    
+    async submitSlip() {
+        if (this.selectedPicks.length < 2) {
+            alert('Please select at least 2 picks');
+            return;
+        }
+        
+        const entryFee = parseFloat(document.getElementById('entry-fee').value) || 0;
+        
+        if (entryFee <= 0) {
+            alert('Please enter a valid entry fee');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/fantasy-sports/api/submit-slip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    entry_fee: entryFee,
+                    picks: this.selectedPicks
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert(`Pick slip submitted successfully! Slip ID: ${data.slip_id}`);
+                window.location.href = '/fantasy-sports/my-picks';
+            } else {
+                alert(data.message || 'Failed to submit pick slip');
+            }
+        } catch (error) {
+            console.error('Error submitting slip:', error);
+            alert('Failed to submit pick slip');
+        }
+    }
+    
+    formatOdds(odds) {
+        const num = parseFloat(odds);
+        return num > 0 ? `+${num}` : `${num}`;
+    }
+}
+
+// Custom styles
+const style = document.createElement('style');
+style.textContent = `
+    .sport-filter-btn {
+        @apply px-4 py-2 rounded border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors;
+    }
+    .sport-filter-btn.active {
+        @apply bg-blue-600 text-white border-blue-600;
+    }
+`;
+document.head.appendChild(style);
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    new PickBuilder();
+});
+</script>
+{% endblock %}

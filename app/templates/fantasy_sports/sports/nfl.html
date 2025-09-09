@@ -1,0 +1,451 @@
+{% extends "fantasy_sports/sports/base_sport.html" %}
+
+{% block sport_title %}NFL{% endblock %}
+{% block sport_gradient %}from-green-50 to-blue-100{% endblock %}
+{% block sport_header_bg %}bg-gradient-to-r from-green-600 to-blue-800{% endblock %}
+{% block sport_icon_bg %}bg-white bg-opacity-20{% endblock %}
+{% block sport_icon %}🏈{% endblock %}
+{% block sport_name %}National Football League{% endblock %}
+{% block sport_subtitle %}Bet on NFL player props - Passing yards, touchdowns, receptions and more{% endblock %}
+{% block sport_slip_bg %}bg-green-600{% endblock %}
+{% block sport_slip_hover %}bg-green-700{% endblock %}
+
+{% block sport_prop_options %}
+<option value="passing_yards">Passing Yards</option>
+<option value="passing_tds">Passing TDs</option>
+<option value="rushing_yards">Rushing Yards</option>
+<option value="receiving_yards">Receiving Yards</option>
+<option value="receptions">Receptions</option>
+<option value="fantasy_points">Fantasy Points</option>
+{% endblock %}
+
+{% block sport_league_options %}
+<option value="nfl">National Football League</option>
+<option value="ncaa_football">NCAA Football</option>
+{% endblock %}
+
+{% block content %}
+{{ super() }}
+
+<!-- NFL Specific Features -->
+<div class="container mx-auto px-4 py-8">
+    <!-- NFL Week Info -->
+    <div class="bg-gradient-to-r from-green-600 to-blue-800 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="text-xl font-bold mb-2">Week 2 - NFL Season</h3>
+                <p class="opacity-90">16 games this week • Props available now</p>
+            </div>
+            <div class="text-right">
+                <div class="text-2xl font-bold" id="nfl-week-games">16</div>
+                <div class="text-sm opacity-75">Games This Week</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- NFL Position Categories -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="text-2xl mr-2">🎯</span>
+            Props by Position
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <button class="position-category-btn bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-6 text-center transition-colors" data-position="QB">
+                <div class="text-3xl mb-3">🎯</div>
+                <div class="font-bold text-lg text-blue-700 mb-2">Quarterbacks</div>
+                <div class="text-sm text-blue-600 mb-3">Passing yards, TDs, completions</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Pass Yds</span>
+                    <span class="bg-blue-100 text-blue-700 px-2 py-1 rounded">Pass TDs</span>
+                </div>
+            </button>
+            
+            <button class="position-category-btn bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-6 text-center transition-colors" data-position="RB">
+                <div class="text-3xl mb-3">🏃</div>
+                <div class="font-bold text-lg text-green-700 mb-2">Running Backs</div>
+                <div class="text-sm text-green-600 mb-3">Rushing yards, receptions, TDs</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded">Rush Yds</span>
+                    <span class="bg-green-100 text-green-700 px-2 py-1 rounded">Rec Yds</span>
+                </div>
+            </button>
+            
+            <button class="position-category-btn bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg p-6 text-center transition-colors" data-position="WR">
+                <div class="text-3xl mb-3">🙌</div>
+                <div class="font-bold text-lg text-purple-700 mb-2">Wide Receivers</div>
+                <div class="text-sm text-purple-600 mb-3">Receiving yards, receptions, TDs</div>
+                <div class="flex justify-center space-x-2 text-xs">
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">Rec Yds</span>
+                    <span class="bg-purple-100 text-purple-700 px-2 py-1 rounded">Receptions</span>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Popular NFL Props -->
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <h3 class="text-lg font-semibold mb-4 flex items-center">
+            <span class="text-2xl mr-2">🔥</span>
+            Trending NFL Props
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button class="prop-category-btn bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg p-4 text-center transition-colors" data-prop="passing_yards">
+                <div class="text-2xl mb-2">🎯</div>
+                <div class="font-semibold text-red-700">Passing Yards</div>
+                <div class="text-xs text-red-600">QB Pass Yds O/U</div>
+            </button>
+            <button class="prop-category-btn bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-lg p-4 text-center transition-colors" data-prop="rushing_yards">
+                <div class="text-2xl mb-2">🏃</div>
+                <div class="font-semibold text-orange-700">Rushing Yards</div>
+                <div class="text-xs text-orange-600">RB Rush Yds</div>
+            </button>
+            <button class="prop-category-btn bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg p-4 text-center transition-colors" data-prop="receiving_yards">
+                <div class="text-2xl mb-2">🙌</div>
+                <div class="font-semibold text-blue-700">Receiving Yards</div>
+                <div class="text-xs text-blue-600">WR/TE Rec Yds</div>
+            </button>
+            <button class="prop-category-btn bg-green-50 hover:bg-green-100 border border-green-200 rounded-lg p-4 text-center transition-colors" data-prop="receptions">
+                <div class="text-2xl mb-2">🎯</div>
+                <div class="font-semibold text-green-700">Receptions</div>
+                <div class="text-xs text-green-600">Total Catches</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- NFL Top Players Showcase -->
+    <div class="bg-gradient-to-r from-green-600 to-blue-800 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="text-2xl mr-2">🏆</span>
+            NFL Top Players 2025
+        </h3>
+        <div id="featured-nfl-players" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Featured players will be loaded here -->
+            <div class="text-center py-4 col-span-full text-white opacity-75">Loading top NFL players...</div>
+        </div>
+    </div>
+
+    <!-- NFL Prime Time Games -->
+    <div class="bg-gradient-to-r from-gray-800 to-blue-900 rounded-lg shadow-lg p-6 mb-8 text-white">
+        <h3 class="text-xl font-bold mb-4 flex items-center">
+            <span class="text-2xl mr-2">⭐</span>
+            Prime Time Games
+        </h3>
+        <div id="prime-time-games" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Prime time games will be loaded here -->
+            <div class="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+                <div class="text-sm opacity-75 mb-2">Thursday Night Football</div>
+                <div class="font-bold text-lg">Loading...</div>
+            </div>
+            <div class="bg-white bg-opacity-20 rounded-lg p-4 text-center">
+                <div class="text-sm opacity-75 mb-2">Sunday Night Football</div>
+                <div class="font-bold text-lg">Loading...</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block sport_scripts %}
+<script>
+// NFL-specific functionality
+class NFLPage extends SportPage {
+    constructor(config) {
+        super(config);
+        this.loadNFLSpecificData();
+        this.bindNFLEvents();
+    }
+    
+    async loadNFLSpecificData() {
+        await this.loadFeaturedNFLPlayers();
+        await this.loadPrimeTimeGames();
+        await this.loadNFLStats();
+    }
+    
+    async loadFeaturedNFLPlayers() {
+        // Featured NFL players with reliable photo URLs
+        const featuredPlayers = [
+            {
+                first_name: 'Patrick',
+                last_name: 'Mahomes',
+                position: 'QB',
+                team_short_name: 'KC',
+                player_id: 1,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/3139477.png&w=350&h=254'
+            },
+            {
+                first_name: 'Josh',
+                last_name: 'Allen',
+                position: 'QB',
+                team_short_name: 'BUF',
+                player_id: 2,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/3918298.png&w=350&h=254'
+            },
+            {
+                first_name: 'Christian',
+                last_name: 'McCaffrey',
+                position: 'RB',
+                team_short_name: 'SF',
+                player_id: 3,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/3045147.png&w=350&h=254'
+            },
+            {
+                first_name: 'Tyreek',
+                last_name: 'Hill',
+                position: 'WR',
+                team_short_name: 'MIA',
+                player_id: 4,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/2976499.png&w=350&h=254'
+            },
+            {
+                first_name: 'Travis',
+                last_name: 'Kelce',
+                position: 'TE',
+                team_short_name: 'KC',
+                player_id: 5,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/15847.png&w=350&h=254'
+            },
+            {
+                first_name: 'Lamar',
+                last_name: 'Jackson',
+                position: 'QB',
+                team_short_name: 'BAL',
+                player_id: 6,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/3916387.png&w=350&h=254'
+            },
+            {
+                first_name: 'Joe',
+                last_name: 'Burrow',
+                position: 'QB',
+                team_short_name: 'CIN',
+                player_id: 7,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/4360310.png&w=350&h=254'
+            },
+            {
+                first_name: 'Justin',
+                last_name: 'Jefferson',
+                position: 'WR',
+                team_short_name: 'MIN',
+                player_id: 8,
+                photo_url: 'https://a.espncdn.com/combiner/i?img=/i/headshots/nfl/players/full/4035687.png&w=350&h=254'
+            }
+        ];
+        
+        try {
+            const container = document.getElementById('featured-nfl-players');
+            container.innerHTML = '';
+            
+            featuredPlayers.forEach(player => {
+                const playerCard = this.createNFLPlayerCard(player);
+                container.appendChild(playerCard);
+            });
+            
+        } catch (error) {
+            console.error('Error loading featured NFL players:', error);
+            const container = document.getElementById('featured-nfl-players');
+            container.innerHTML = '<div class="col-span-full text-center py-4 text-white opacity-75">Unable to load players</div>';
+        }
+    }
+    
+    createNFLPlayerCard(player) {
+        const card = document.createElement('div');
+        card.className = 'bg-white bg-opacity-20 rounded-lg p-4 text-center hover:bg-opacity-30 transition-colors cursor-pointer';
+        
+        // Determine position emoji
+        const positionEmoji = {
+            'QB': '🎯',
+            'RB': '🏃',
+            'WR': '🙌',
+            'TE': '🏈',
+            'LB': '🛡️',
+            'DE': '💪',
+            'DT': '🏔️'
+        };
+        
+        card.innerHTML = `
+            <div class="w-16 h-16 mx-auto mb-3 rounded-full overflow-hidden bg-white">
+                <img src="${player.photo_url || 'https://via.placeholder.com/64x64/22c55e/ffffff?text=' + (player.first_name[0] || 'N') + (player.last_name[0] || 'F')}" 
+                     alt="${player.first_name} ${player.last_name}" 
+                     class="w-full h-full object-cover"
+                     onerror="this.src='https://via.placeholder.com/64x64/22c55e/ffffff?text=${(player.first_name[0] || 'N')}${(player.last_name[0] || 'F')}'">
+            </div>
+            <div class="font-semibold text-sm">${player.first_name} ${player.last_name}</div>
+            <div class="text-xs opacity-75 mb-2">${player.team_short_name || 'NFL'} - ${player.position || 'Player'}</div>
+            <div class="text-lg">${positionEmoji[player.position] || '🏈'}</div>
+        `;
+        
+        card.addEventListener('click', () => {
+            // Filter props by this player
+            this.filterPropsByPlayer(player.player_id);
+        });
+        
+        return card;
+    }
+    
+    async loadPrimeTimeGames() {
+        try {
+            const response = await fetch('/fantasy-sports/api/games');
+            const data = await response.json();
+            
+            if (data.success) {
+                // Filter for NFL games
+                const nflGames = data.games.filter(g => g.sport_name === 'Football');
+                
+                const container = document.getElementById('prime-time-games');
+                container.innerHTML = '';
+                
+                // Simulate prime time games
+                const primeTimeGames = [
+                    { name: 'Thursday Night Football', teams: 'Chiefs @ Bills', time: '8:15 PM ET' },
+                    { name: 'Sunday Night Football', teams: 'Cowboys @ Eagles', time: '8:20 PM ET' }
+                ];
+                
+                primeTimeGames.forEach(game => {
+                    const gameCard = document.createElement('div');
+                    gameCard.className = 'bg-white bg-opacity-20 rounded-lg p-4 cursor-pointer hover:bg-opacity-30 transition-colors';
+                    gameCard.innerHTML = `
+                        <div class="text-sm opacity-75 mb-2">${game.name}</div>
+                        <div class="font-bold text-lg mb-1">${game.teams}</div>
+                        <div class="text-sm">${game.time}</div>
+                    `;
+                    
+                    gameCard.addEventListener('click', () => {
+                        // Filter props for these teams
+                        this.filterPropsForPrimeTime();
+                    });
+                    
+                    container.appendChild(gameCard);
+                });
+            }
+        } catch (error) {
+            console.error('Error loading prime time games:', error);
+        }
+    }
+    
+    async loadNFLStats() {
+        // Update week info and stats
+        document.getElementById('nfl-week-games').textContent = '16';
+        
+        // Load additional NFL-specific stats
+        try {
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=100`);
+            const data = await response.json();
+            
+            if (data.success) {
+                // Count props by position
+                const propsByPosition = {};
+                data.props.forEach(prop => {
+                    const pos = prop.position || 'Unknown';
+                    propsByPosition[pos] = (propsByPosition[pos] || 0) + 1;
+                });
+                
+                console.log('NFL Props by Position:', propsByPosition);
+            }
+        } catch (error) {
+            console.error('Error loading NFL stats:', error);
+        }
+    }
+    
+    bindNFLEvents() {
+        // Position category buttons
+        document.querySelectorAll('.position-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const position = e.currentTarget.dataset.position;
+                this.filterPropsByPosition(position);
+                
+                // Switch to props tab
+                this.switchTab('props');
+                
+                // Highlight selected category
+                document.querySelectorAll('.position-category-btn').forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+                e.currentTarget.classList.add('ring-2', 'ring-blue-500');
+            });
+        });
+        
+        // Prop category filter buttons
+        document.querySelectorAll('.prop-category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const propType = e.currentTarget.dataset.prop;
+                this.filterPropsByType(propType);
+                
+                // Switch to props tab
+                this.switchTab('props');
+                
+                // Highlight selected category
+                document.querySelectorAll('.prop-category-btn').forEach(b => b.classList.remove('ring-2', 'ring-green-500'));
+                e.currentTarget.classList.add('ring-2', 'ring-green-500');
+            });
+        });
+    }
+    
+    async filterPropsByPosition(position) {
+        try {
+            const response = await fetch(`/fantasy-sports/api/players?sport_id=${this.sportId}&position=${position}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                // Get all props for players in this position
+                const playerIds = data.players.map(p => p.player_id);
+                
+                // Filter current props by these players
+                const propsResponse = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=100`);
+                const propsData = await propsResponse.json();
+                
+                if (propsData.success) {
+                    const filteredProps = propsData.props.filter(prop => 
+                        playerIds.includes(prop.player_id)
+                    );
+                    this.renderProps(filteredProps);
+                }
+            }
+        } catch (error) {
+            console.error('Error filtering props by position:', error);
+        }
+    }
+    
+    async filterPropsByType(propType) {
+        try {
+            // Map prop type to filter
+            const propTypeMap = {
+                'passing_yards': 'Passing Yards',
+                'passing_tds': 'Passing TDs',
+                'rushing_yards': 'Rushing Yards',
+                'receiving_yards': 'Receiving Yards',
+                'receptions': 'Receptions',
+                'fantasy_points': 'Fantasy Points'
+            };
+            
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&prop_type=${propTypeMap[propType]}&limit=50`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+            }
+        } catch (error) {
+            console.error('Error filtering props:', error);
+        }
+    }
+    
+    async filterPropsForPrimeTime() {
+        // Filter props for prime time games
+        this.switchTab('props');
+        
+        // Show all props for now (in production, filter by specific games)
+        try {
+            const response = await fetch(`/fantasy-sports/api/props?sport_id=${this.sportId}&limit=30`);
+            const data = await response.json();
+            
+            if (data.success) {
+                this.renderProps(data.props);
+            }
+        } catch (error) {
+            console.error('Error filtering prime time props:', error);
+        }
+    }
+}
+
+// Override the SportPage initialization for NFL
+document.addEventListener('DOMContentLoaded', () => {
+    new NFLPage(sportConfig);
+});
+</script>
+{% endblock %}

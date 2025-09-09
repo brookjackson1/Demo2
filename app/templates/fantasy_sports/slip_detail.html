@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+
+{% block title %}Fantasy Sports - Slip #{{ slip.slip_id }}{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Pick Slip #{{ slip.slip_id }}</h1>
+        <a href="{{ url_for('fantasy_sports.my_picks') }}" class="text-blue-600 hover:text-blue-800">
+            ← Back to My Picks
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Panel - Slip Details -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-md">
+                <div class="p-6 border-b">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-semibold">Pick Details</h2>
+                        {% if slip.status == 'pending' %}
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-medium">Pending</span>
+                        {% elif slip.status == 'won' %}
+                            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">Won</span>
+                        {% elif slip.status == 'lost' %}
+                            <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-medium">Lost</span>
+                        {% else %}
+                            <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">{{ slip.status.title() }}</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="p-6">
+                    <div class="space-y-4">
+                        {% for pick in slip.picks %}
+                        <div class="border rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h3 class="font-semibold text-lg">{{ pick.first_name }} {{ pick.last_name }}</h3>
+                                    <p class="text-gray-600">{{ pick.prop_type_name }} - {{ pick.unit }}</p>
+                                    <p class="text-sm text-gray-500">{{ pick.home_team }} vs {{ pick.away_team }}</p>
+                                    <p class="text-sm text-gray-500">{{ pick.game_date.strftime('%Y-%m-%d %H:%M') if pick.game_date else 'TBD' }}</p>
+                                </div>
+                                {% if pick.result %}
+                                    {% if pick.result == 'win' %}
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-sm">✓ Win</span>
+                                    {% elif pick.result == 'loss' %}
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 rounded text-sm">✗ Loss</span>
+                                    {% else %}
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-sm">Push</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-sm">Pending</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="bg-gray-50 rounded-lg p-3">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <span class="font-medium text-lg">
+                                            {{ pick.selection.upper() }} {{ pick.line_value }}
+                                        </span>
+                                        <span class="text-gray-500 ml-2">
+                                            ({{ "+" + pick.odds|string if pick.odds > 0 else pick.odds }})
+                                        </span>
+                                    </div>
+                                    {% if pick.selection == 'over' %}
+                                        <div class="text-blue-600 font-medium">OVER</div>
+                                    {% else %}
+                                        <div class="text-red-600 font-medium">UNDER</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Slip Summary -->
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                <h3 class="text-lg font-semibold mb-4">Slip Summary</h3>
+                
+                <div class="space-y-3 mb-6">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Submitted:</span>
+                        <span class="font-medium">{{ slip.submitted_at.strftime('%m/%d/%Y %I:%M %p') }}</span>
+                    </div>
+                    
+                    {% if slip.settled_at %}
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Settled:</span>
+                        <span class="font-medium">{{ slip.settled_at.strftime('%m/%d/%Y %I:%M %p') }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Username:</span>
+                        <span class="font-medium">{{ slip.username }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Number of Picks:</span>
+                        <span class="font-medium">{{ slip.num_picks }}</span>
+                    </div>
+                </div>
+
+                <div class="border-t pt-4 space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Entry Fee:</span>
+                        <span class="font-medium">${{ "%.2f"|format(slip.entry_fee) }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Potential Payout:</span>
+                        <span class="font-medium text-green-600">${{ "%.2f"|format(slip.potential_payout) }}</span>
+                    </div>
+                    
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Multiplier:</span>
+                        <span class="font-medium">{{ "%.1f"|format(slip.potential_payout / slip.entry_fee) }}x</span>
+                    </div>
+
+                    {% if slip.actual_payout > 0 %}
+                    <div class="border-t pt-3">
+                        <div class="flex justify-between">
+                            <span class="font-semibold">Actual Payout:</span>
+                            <span class="font-bold text-green-600">${{ "%.2f"|format(slip.actual_payout) }}</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="mt-6">
+                    {% set completed_picks = slip.picks|selectattr("result")|list|length %}
+                    {% set won_picks = slip.picks|selectattr("result", "equalto", "win")|list|length %}
+                    <div class="mb-2">
+                        <div class="flex justify-between text-sm">
+                            <span>Progress</span>
+                            <span>{{ completed_picks }}/{{ slip.num_picks }} completed</span>
+                        </div>
+                    </div>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div class="bg-blue-600 h-2 rounded-full" 
+                             style="width: {{ (completed_picks / slip.num_picks * 100) if slip.num_picks > 0 else 0 }}%">
+                        </div>
+                    </div>
+                    
+                    {% if completed_picks > 0 %}
+                    <div class="mt-2 text-center text-sm">
+                        <span class="text-green-600">{{ won_picks }} wins</span>
+                        <span class="text-gray-400 mx-1">•</span>
+                        <span class="text-red-600">{{ completed_picks - won_picks }} losses</span>
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if slip.status == 'pending' and completed_picks < slip.num_picks %}
+                <div class="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                        <span class="text-sm text-blue-700">Waiting for games to complete...</span>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="mt-8 text-center">
+        <a href="{{ url_for('fantasy_sports.pick_builder') }}" 
+           class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors mr-4">
+            Create New Slip
+        </a>
+        <a href="{{ url_for('fantasy_sports.my_picks') }}" 
+           class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+            View All My Slips
+        </a>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.tailwindcss.com"></script>
+{% endblock %}

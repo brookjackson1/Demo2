@@ -7,8 +7,12 @@ app.secret_key = 'your-secret'  # Replace with an environment
 
 # Register Blueprints
 from app.blueprints.examples import examples
+from app.blueprints.fantasy_sports import fantasy_sports
+from app.blueprints.admin import admin
 
 app.register_blueprint(examples, url_prefix='/example')
+app.register_blueprint(fantasy_sports, url_prefix='/fantasy-sports')
+app.register_blueprint(admin, url_prefix='/admin')
 
 from . import routes
 
